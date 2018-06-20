@@ -1,0 +1,27 @@
+.content_map {
+    width: 500px;
+    height: 500px;
+    float: right;
+}
+
+/* .content_article {
+    width: 400px;
+    height: 300px;
+     
+} */
+
+
+#map {
+    display:block;
+    text-align:center;
+    width: 500px;
+    height: 500px; 
+}
+
+#playtime {
+    display:block;
+    text-align:center;
+    width: 400px;
+    height: 300px; 
+    float:left;
+}

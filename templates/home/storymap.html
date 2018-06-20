@@ -1,0 +1,280 @@
+{% extends 'base.html' %} {% block meta %}
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="0"> {% endblock %} {% block script %}
+
+<script>
+    function initAutocomplete() {
+        Scene_place = new google.maps.Geocoder();
+        var latlng = new google.maps.LatLng(25.03, 121.54);
+        var myOptions = {
+            zoom: 13,
+            center: latlng,
+            mapTypeId: 'roadmap'
+        }
+        mapshow = new google.maps.Map(document.getElementById("map"), myOptions);
+        // voice();
+    }
+
+    // function voice() {
+    //     $.get("/voice", function (data) {
+    //         $('#addressinput').val(data)
+    //         document.getElementById("buttonAjax").click()
+    //     })
+    //     document.getElementById("buttonAjax").addEventListener("click", voiceContinue)
+    // }
+
+    // function voiceContinue() {
+    //     $.get("/voiceContinue", function (data) {
+    //         $('#addressinput').val(data);
+    //         codeAddress();
+    //         voiceContinue_con();
+    //     })
+    // }
+
+    // function voiceContinue_con() {
+    //     $.get("/voiceContinue_con", function (data) {
+    //         $('#addressinput').val(data);
+    //         codeAddress();
+    //         voiceContinue();
+    //     })
+    // }
+
+    function image() {
+        $.get("/graphmodel", function (data) {
+            $('#addressinput').val(data);
+            $('#robotspeak').empty()
+            var speakDIV = document.getElementById("robotspeak")
+            var elespeak = document.createElement("h4")
+            var txtspeak = document.createTextNode("I know. This is " + data + ". The followings are the sightseeing spots around this area.")
+            elespeak.style.fontSize = '16pt'
+            elespeak.style.width="400px"
+            elespeak.appendChild(txtspeak)
+            speakDIV.appendChild(elespeak)
+            codeAddress();
+        })
+    }
+    function go() {
+        if (event.keyCode == "13") {
+            document.getElementById("buttonAjax").click();
+        }
+    }
+
+    function codeAddress() {
+        photoin()
+        var address = document.getElementById("addressinput").value;
+        Scene_place.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                location_result = results[0].geometry.location
+                var markers = new Array();
+                mapshow.setCenter(location_result);
+                markers = new google.maps.Marker({
+                    map: mapshow,
+                    position: results[0].geometry.location
+                });
+                markers.setTitle(address);
+
+                $("#alert").empty()
+                $("#show").empty()
+                $("#nanoGallery").empty()
+                var location_input = String(addressinput.value)
+                location_NameList = new Array()
+                if (location_input != "") {
+                    document.getElementById("show").style.clear = "both"
+                    i = 0
+                    $.ajax({
+                        'type': 'GET',
+                        'url': '/static/datas/travellocationCHINESE_edit.xml',
+                        'dataType': 'xml'
+                    }).done(function (datas) {
+                        var docFragment = $(document.createDocumentFragment());
+                        $(datas).find('Section').each(function () {
+                            location_result_str = String(location_result).split(" ")
+                            location_lat = parseFloat(location_result_str[0].substr(1, 6))
+                            location_lng = parseFloat(location_result_str[1].substr(0, 6))
+                            Max_lat = location_lat + 0.01
+                            min_lat = location_lat - 0.01
+                            Max_lng = location_lng + 0.01
+                            min_lng = location_lng - 0.01
+                            location_range = new Array()
+                            location_range = [$(this).find('latitude').text(), $(this).find('longitude').text()]
+                            location_range_lat = parseFloat(location_range[0]);
+                            location_range_lng = parseFloat(location_range[1]);
+
+                            if (location_range_lat <= Max_lat && location_range_lat >= min_lat && location_range_lng <= Max_lng && location_range_lng >= min_lng) {
+                                location_Name = $(this).find('stitle').text()
+                                location_story = $(this).find('xbody').text()
+                                location_img = $(this).find('img:first').text()
+                                location_imglist = $(this).find('img')
+                                location_addr = $(this).find('address').text()
+                                location_NameList.push(location_Name)
+
+                                var theDIV = document.getElementById("show")
+                                theDIV.style.marginTop = "5em"
+                                var eleh3 = document.createElement("h3")
+                                eleh3.style.fontWeight = "bold"
+                                eleh3.style.lineHeight = "3em"
+                                var txth3 = document.createTextNode(location_Name)
+
+                                var imgshow = document.createElement("img")
+                                imgshow.style.textAlign = "center"
+                                imgshow.style.width = "350px"
+                                imgshow.style.height = "200px"
+                                imgshow.style.marginBottom = "1.5em"
+                                imgshow.style.borderRadius = "20px"
+
+                                var imgline = document.createElement("img")
+                                imgline.style.textAlign = "center"
+                                imgline.style.width = "115px"
+                                imgline.style.height = "80px"
+                                imgline.style.margin = "0.5%"
+                                imgline.style.borderRadius = "5px"
+                                imgline.style.cssFloat = "left"
+                                imgline.src = location_img
+                                var a = $("<a></a>").attr({ 'href': location_img, 'data-lightbox': 'park', 'data-title': location_Name }).append(imgline);
+                                docFragment.append(a);
+
+                                var eleaddr = document.createElement("h4")
+                                eleaddr.style.lineHeight = "2em"
+                                eleaddr.style.textAlign = "justify"
+                                var txtaddr = document.createTextNode("位址資訊：" + location_addr)
+
+                                var eleh5 = document.createElement("h4")
+                                eleh5.style.textIndent = "2em"
+                                eleh5.style.lineHeight = "2em"
+                                eleh5.style.textAlign = "justify"
+                                eleh5.style.marginBottom = "3em"
+                                var txth5 = document.createTextNode(location_story)
+
+                                eleh3.appendChild(txth3)
+                                theDIV.appendChild(eleh3)
+
+                                imgshow.src = location_img
+                                theDIV.appendChild(imgshow)
+
+                                eleaddr.appendChild(txtaddr)
+                                theDIV.appendChild(eleaddr)
+
+                                eleh5.appendChild(txth5)
+                                theDIV.appendChild(eleh5)
+                            }
+                        })
+                        $('#nanoGallery').append(docFragment)
+                    })
+                }
+                else {
+                    var theDIV = document.getElementById("show")
+                    var eleP = document.createElement("h4")
+                    eleP.style.textIndent = "3em"
+                    var txtP = document.createTextNode("請輸入景點名稱")
+                    eleP.appendChild(txtP)
+                    theDIV.appendChild(eleP)
+                }
+            }
+            else {
+                document.getElementById("alert").textContent = "未找到相關地點"
+                $("#show").empty()
+                $("#nanoGallery").empty()
+            }
+        })
+    }
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYJiMej9SFZViKKvWhPj6Ga8QV8hZZI9A
+&libraries=places&callback=initAutocomplete" async defer>
+</script> {% load static %}
+<script src="{% static 'scripts/jquery-ui.min-effect.js' %}"></script>
+<script src="{% static 'scripts/lightbox.js' %}"></script> {% endblock %}{% block style %} {% load static %}
+<link href="{% static 'styles/googlemap.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'styles/lightbox.css' %}">
+<style>
+    .thumb {
+        width: 120px
+    }
+</style>
+{% endblock %} {% block content %} {% load static %}{% if request.COOKIES.id %}
+<div style="width:920px;margin:0px auto">
+    <div id="playtime" style="margin-bottom:1.5em;">
+        <img style="float:left;width:350px;height:500px;border-radius:20px;margin-bottom:1.5em;opacity: 0.7;" src="{% static 'images/konstantin-aal-353806-unsplash.jpg' %}">
+    </div>
+    <div class="content_map">
+        <div id="map"></div>
+    </div>
+    <div method="POST" style="clear:both;float:right;margin:1.5em 0em 0em 0em">
+        <input type="submit" value="文字搜尋" id="buttonAjax" onclick="codeAddress()" class="btn btn-info" style="font-size:20px;padding:0.25em 1em 0.25em 1em;border-radius:15px;float:right;margin:0em 0em 0em 1em;">
+        <!-- <input type="submit" value="語音助理" id="voiceAjax" onclick="voice()" class="btn btn-info" style="font-size:20px;padding:0.25em 1em 0.25em 1em;margin:0em 1em 0em 1em;border-radius:15px;"> -->
+        <input type="submit" value="景點識別" id="imageAjax" onclick="image()" class="btn btn-info" style="float:right;font-size:20px;padding:0.25em 1em 0.25em 1em;border-radius:15px;">
+        <br>
+        <input id="addressinput" name="address_in" type="text" style="clear:both;width:200px;height:30px;float:right;margin:1.5em 0em 1em 0em;"
+            ; placeholder="Search Box" onkeyup="go();">
+        <br>
+        <h4 id="alert" font-family="Microsoft JhengHei" style="clear:both;float:right;color:red;padding-top:0.3em;"></h4>
+    </div>
+    <div style="float:left;margin:1.5em 0em 0em 0em">
+        <form id="load_pic" action="/pic_saver/" method="POST" enctype="multipart/form-data">
+            {%csrf_token%}
+            <input type="file" name="pic_go" style="font-size:12pt;float:left;width:200px;display:inline;" onchange="readURL(this)" targetID="showgraph"
+                accept="image/gif, image/jpeg, image/png">
+            <input type="submit" id="photo_go" style="font-size:12pt;" value="Confirm" style="float:left">
+            <div id="preview_go"></div>
+            <div id="photo_play" style="clear:both;float:left"></div>
+            <div style="clear:both;float:left">
+                <img style="float:left;width:100px;height:100px;border-radius:20px;margin:3em 0em 1.5em 0em;" src="{% static 'images/adorable-2861801.png' %}">
+            </div>
+            <div id="robotspeak" style="float:left;margin:3.5em 0em 5em 2em">
+                <h4 style="float:left;width:400px;line-height: 1.5em;font-size:16pt">Hello , I'm TripRobot. Just upload the picture, I'll tell you where it is in Taipei!</h4>
+            </div>
+        </form>
+    </div>
+    <div id="nanoGallery" style="clear:both;margin:3em 0em 3em 0em;">
+    </div>
+    <div style="clear:both;height:30px">
+        </div>
+    <div id="show" style="text-align:left;margin:3em 0em 0em 0em;">
+    </div>
+</div>
+{% endif %} {% endblock %} {% block script2 %} {% load static %}
+<script>
+    function readURL(input) {
+        $("#preview_go").empty()
+        $("#photo_play").empty()
+        var DIVpre = document.getElementById("preview_go")
+        var imgpre = document.createElement("img")
+        imgpre.setAttribute("id", "showgraph");
+        imgpre.style.textAlign = "center"
+        imgpre.style.width = "350px"
+        imgpre.style.height = "250px"
+        imgpre.style.marginTop = "1.5em"
+        imgpre.style.marginBottom = "1.5em"
+        imgpre.style.borderRadius = "20px"
+        // imgpre.style.opacity="0.65"
+        DIVpre.appendChild(imgpre)
+        if (input.files && input.files[0]) {
+            var imageTagID = input.getAttribute("targetID");
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = document.getElementById(imageTagID);
+                img.setAttribute("src", e.target.result)
+            }
+            reader.readAsDataURL(input.files[0]);
+
+        }
+    }
+    function photoin() {
+        $("#preview_go").empty()
+        $("#photo_play").empty()
+        var DIVplay = document.getElementById("photo_play")
+        var imgplay = document.createElement("img")
+        imgplay.setAttribute("id", "showimg");
+        imgplay.style.textAlign = "center"
+        imgplay.style.width = "350px"
+        imgplay.style.height = "250px"
+        imgplay.style.marginTop = "1.5em"
+        imgplay.style.marginBottom = "1.5em"
+        imgplay.style.borderRadius = "20px"
+        // imgplay.style.opacity = "0.8"
+        imgplay.src = "/static/images/kayak-2975812.jpg"
+        DIVplay.appendChild(imgplay)
+    }
+</script>{% endblock %}

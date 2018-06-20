@@ -1,0 +1,243 @@
+{% extends 'base.html' %} {% block script %} {% load static %}
+<script>
+    var MVshow = document.createElement('script');
+
+    MVshow.src = "https://www.youtube.com/iframe_api";
+    var MV = document.getElementsByTagName('script')[0];
+    MV.parentNode.insertBefore(MVshow, MV);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            videoId: 'qMdwFkO8xA0',
+            events: {
+                'onReady': PlayNow,
+            }
+        });
+    }
+    function PlayNow(event) {
+        event.target.playVideo();
+    }
+</script>
+<script src="{% static 'scripts/jquery-ui.min-effect.js' %}"></script>
+<script src="{% static 'scripts/lightbox.js' %}"></script> {% endblock %}{% block style %} {% load static %}
+<link rel="stylesheet" href="{% static 'styles/bootstrap.min.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'styles/lightbox.css' %}"> -->
+<style>
+    /* .thumb {
+        width: 120px
+    } */
+
+    #map {
+        width: 500px;
+        height: 400px;
+    }
+</style>
+{% endblock %} {% block content %} {% load static %}{% if request.COOKIES.id %}
+<div style="width:920px;margin:0px auto">
+    <div style="clear:both;width:500px;height:650px;float:left">
+        <div id="map" style="clear:both;width:500px;height:500px"></div>
+        <div class="alert alert-danger" role="alert" style="width:500px;height:150px;margin-top:1.5em;padding:2em 1.5em 0.5em 1.5em;border-radius:15px;">
+            <label class="formGroupExampleInput" style="font-size:14pt;width:90px;float:left;text-align:left;">起始位置:</label>
+            <input id="start" name="start_go" type="text" class="form-control" style="font-size:14pt;text-align:left;width:120px;height:30px;float:left;"
+                ; placeholder="Type Start" onkeyup="go();">
+            <select id="mode" class="form-control" style="font-size:14pt;float:right;width:120px;height:50px;text-align:center;">
+                <option value="DRIVING">駕駛</option>
+                <option value="TRANSIT">大眾運輸</option>
+            </select>
+            <label class="formGroupExampleInput" style="font-size:14pt;float:right;width:90px;height:30px;text-align:left;">行駛模式: </label>
+            <br>
+            <label class="formGroupExampleInput" style="clear:both;font-size:14pt;float:left;width:90px;text-align:left;margin-top:1em">終點位置:</label>
+            <input id="end" name="end_go" type="text" class="form-control" style="font-size:14pt;text-align:left;width:120px;height:30px;float:left;margin-top:1em"
+                ; placeholder="Type End" onkeyup="go();">
+            <input type="submit" value="路線導覽" id="buttonGo" class="btn btn-success text-dark" style="font-size:14pt;float:right;width:150px;height:35px;margin-top:1em"
+                onkeyup="go();">
+        </div>
+    </div>
+    <div id="player" style="float:right;width:400px;height:300px;margin:0em 0em 1.5em 0em"></div>
+    <div>
+        <img id="showgraph1" style="float:right;width:400px;height:270px;border-radius:20px;margin-bottom:1.5em;opacity: 0.5;" src="{% static 'images/Canva - One, Way, Cartel, One Way, California.jpg' %}"
+            alt="photo">
+    </div>
+    <div method="POST" style="float:right;width:400px;margin:1.5em 0% 1.5em 0%">
+        <input type="submit" value="文字搜尋" id="voiceclose" onclick="voiceoff()" class="btn btn-info" style="font-size:14pt;padding:0.25em 1em 0.25em 1em;border-radius:15px;float:right">
+        <input type="submit" value="語音助理" id="voiceAjax" onclick="voicestart()" class="btn btn-info" style="font-size:14pt;padding:0.25em 1em 0.25em 1em;margin:0em 1em 0em 1em;border-radius:15px;float:right">
+    </div>
+    <div id="right-panel" style="clear:both;width:400px;font-size:12pt;float:right;height:50px;margin:3em 0% 0% 0%;"></div>
+    <div style="float:left;width:400px;">
+        <div id="show" style="text-align:left;margin:3em 0% 0% 0%;"></div>
+    </div>
+</div>
+{% endif %} {% endblock %} {% block script2 %} {% load static %}
+<script type="text/javascript" charset="UTF-8">
+    function initAutocomplete() {
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 13,
+            center: { lat: 25.03, lng: 121.54 }
+        });
+        directionsDisplay.setMap(map);
+        directionsDisplay.setPanel(document.getElementById('right-panel'));
+        codeAddress(directionsService, directionsDisplay);
+        document.getElementById('buttonGo').addEventListener('click', function () {
+            codeAddress(directionsService, directionsDisplay);
+        });
+    }
+    function go() {
+        if (event.keyCode == "13") {
+            document.getElementById("buttonGo").click();
+        }
+    }
+    function codeAddress(directionsService, directionsDisplay) {
+
+        var selectedMode = document.getElementById('mode').value;
+        var request = {
+            origin: document.getElementById('start').value,
+            destination: document.getElementById('end').value,
+            travelMode: google.maps.TravelMode[selectedMode]
+        };
+        directionsService.route(request, function (response, status) {
+            if (status === 'OK') {
+                directionsDisplay.setDirections(response);
+                // var elem = document.getElementById('showgraph1');
+                // elem.parentNode.removeChild(elem);
+                Scene_place = new google.maps.Geocoder();
+                var address = document.getElementById("end").value;
+                Scene_place.geocode({ 'address': address }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        location_result = results[0].geometry.location
+
+                        $("#show").empty()
+                        var location_input = String(end.value)
+                        location_NameList = new Array()
+                        if (location_input != "") {
+                            document.getElementById("show").style.clear = "both"
+                            i = 0
+                            $.ajax({
+                                'type': 'GET',
+                                'url': '/static/datas/travellocationCHINESE_edit.xml',
+                                'dataType': 'xml'
+                            }).done(function (datas) {
+                                var docFragment = $(document.createDocumentFragment());
+                                $(datas).find('Section').each(function () {
+                                    location_result_str = String(location_result).split(" ")
+                                    location_lat = parseFloat(location_result_str[0].substr(1, 6))
+                                    location_lng = parseFloat(location_result_str[1].substr(0, 6))
+                                    // console.log(location_lat)
+                                    // console.log(location_lng)
+                                    Max_lat = location_lat + 0.01
+                                    min_lat = location_lat - 0.01
+                                    Max_lng = location_lng + 0.01
+                                    min_lng = location_lng - 0.01
+                                    location_range = new Array()
+                                    location_range = [$(this).find('latitude').text(), $(this).find('longitude').text()]
+                                    location_range_lat = parseFloat(location_range[0]);
+                                    location_range_lng = parseFloat(location_range[1]);
+
+                                    if (location_range_lat <= Max_lat && location_range_lat >= min_lat && location_range_lng <= Max_lng && location_range_lng >= min_lng) {
+                                        location_Name = $(this).find('stitle').text()
+                                        location_img = $(this).find('img:first').text()
+                                        location_imglist = $(this).find('img')
+                                        location_memo = $(this).find('MEMO_TIME').text()
+                                        location_addr = $(this).find('address').text()
+                                        location_info = $(this).find('info').text()
+                                        location_NameList.push(location_Name)
+
+
+                                        var theDIV = document.getElementById("show")
+                                        var eleh3 = document.createElement("h4")
+                                        eleh3.style.fontWeight = "bold"
+                                        eleh3.style.lineHeight = "3em"
+                                        var txth3 = document.createTextNode(location_Name)
+
+                                        var imgshow = document.createElement("img")
+                                        imgshow.style.textAlign = "center"
+                                        imgshow.style.width = "270px"
+                                        imgshow.style.height = "148.1px"
+                                        imgshow.style.marginBottom = "1.5em"
+                                        imgshow.style.borderRadius = "20px"
+
+                                        var imgline = document.createElement("img")
+                                        imgline.style.textAlign = "center"
+                                        imgline.style.width = "150px"
+                                        imgline.style.height = "100px"
+                                        imgline.style.margin = "0.5%"
+                                        imgline.style.borderRadius = "5px"
+                                        imgline.style.cssFloat = "left"
+                                        imgline.src = location_img
+                                        var a = $("<a></a>").attr({ 'href': location_img, 'data-lightbox': 'park', 'data-title': location_Name }).append(imgline);
+                                        docFragment.append(a);
+
+                                        var elememo = document.createElement("h5")
+                                        elememo.style.lineHeight = "2em"
+                                        elememo.style.textAlign = "justify"
+                                        var txtmemo = document.createTextNode("★ 開放時間：" + location_memo)
+
+                                        var eleaddr = document.createElement("h5")
+                                        eleaddr.style.lineHeight = "2em"
+                                        eleaddr.style.textAlign = "justify"
+                                        var txtaddr = document.createTextNode("▲ 位址資訊：" + location_addr)
+
+                                        var eleinfo = document.createElement("h5")
+                                        eleinfo.style.lineHeight = "2em"
+                                        eleinfo.style.textAlign = "justify"
+                                        eleinfo.style.marginBottom = "3em"
+                                        var txtinfo = document.createTextNode("● 交通資訊：" + location_info)
+
+                                        eleh3.appendChild(txth3)
+                                        theDIV.appendChild(eleh3)
+
+                                        imgshow.src = location_img
+                                        theDIV.appendChild(imgshow)
+
+                                        elememo.appendChild(txtmemo)
+                                        theDIV.appendChild(elememo)
+
+                                        eleaddr.appendChild(txtaddr)
+                                        theDIV.appendChild(eleaddr)
+
+                                        eleinfo.appendChild(txtinfo)
+                                        theDIV.appendChild(eleinfo)
+
+                                    }
+                                })
+                                // $('#nanoGallery').append(docFragment)
+                            })
+                        }
+                    }
+                    // else {
+                    //     window.alert('Directions request failed due to ' + status);
+                    // }
+                })
+            }
+        })
+    }
+
+    function voicestart() {
+        $.get("/voicestart", function (data) {
+            $('#start').val(data)
+            voiceend()
+        })
+
+    }
+    function voiceend() {
+        $.get("/voiceend", function (data) {
+            $('#end').val(data)
+            voicemode()
+        })
+
+    }
+    async function voicemode() {
+        await $.get("/voicemode", function (data) {
+            $('#mode').val(data);
+
+            // codeAddress()
+        })
+        await document.getElementById("buttonGo").click()
+    }
+
+
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYJiMej9SFZViKKvWhPj6Ga8QV8hZZI9A&callback=initAutocomplete">
+</script>{% endblock %}

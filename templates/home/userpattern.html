@@ -1,0 +1,317 @@
+{% extends 'base.html'%}{% block script %}
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script>
+    window.onload = function () {
+        GenderMale = parseInt(document.getElementById("numMale").textContent)
+        GenderFemale = parseInt(document.getElementById("numFemale").textContent)
+
+        var Genderopt = {
+            animationEnabled: true,
+            title: {
+                text: "性別",
+                fontColor: "black",
+                fontFamily: "Microsoft JhengHei",
+                fontWeight: "bold",
+                fontSize: 28
+            },
+            legend: {
+                horizontalAlign: "center",
+                verticalAlign: "top",
+                fontSize: 20,
+                fontFamily: "Microsoft JhengHei",
+            },
+            data: [{
+                type: "pie",
+                showInLegend: true,
+                toolTipContent: "{name}: ${y} (#percent%)",
+                indexLabel: "{name}",
+                legendText: "{name} (#percent%)",
+                indexLabelPlacement: "inside",
+                indexLabelFontFamily: "Microsoft JhengHei",
+                indexLabelFontColor: "white",
+                indexLabelFontSize: 26,
+                dataPoints: [
+                    { y: GenderMale, name: "男性" },
+                    { y: GenderFemale, name: "女性" }
+                ]
+            }]
+        };
+        $("#Genderchart").CanvasJSChart(Genderopt);
+
+        numCareerList = new Array();
+        percentageCareerList = new Array();
+        CareerArray = new Array();
+        for (i = 0; i < 12; i++) {
+            numCareer = parseInt(document.getElementById("numC" + i).textContent)
+            numCareerList.push(numCareer)
+        }
+
+        for (i = 0; i < 12; i++) {
+            percentageCareer = parseInt(document.getElementById("perC" + i).textContent)
+            percentageCareerList.push(percentageCareer)
+        }
+
+
+        CareerArray.push(new Array(numCareerList[0], "金融業", percentageCareerList[0]))
+        CareerArray.push(new Array(numCareerList[1], "製造業", percentageCareerList[1]))
+        CareerArray.push(new Array(numCareerList[2], "軍公教", percentageCareerList[2]))
+        CareerArray.push(new Array(numCareerList[3], "電子科技業", percentageCareerList[3]))
+        CareerArray.push(new Array(numCareerList[4], "傳統產業", percentageCareerList[4]))
+        CareerArray.push(new Array(numCareerList[5], "服務業", percentageCareerList[5]))
+        CareerArray.push(new Array(numCareerList[6], "媒體行銷公關", percentageCareerList[6]))
+        CareerArray.push(new Array(numCareerList[7], "法律顧問", percentageCareerList[7]))
+        CareerArray.push(new Array(numCareerList[8], "自營商", percentageCareerList[8]))
+        CareerArray.push(new Array(numCareerList[9], "自由業(SOHO)", percentageCareerList[9]))
+        CareerArray.push(new Array(numCareerList[10], "學生", percentageCareerList[10]))
+        CareerArray.push(new Array(numCareerList[11], "其他", percentageCareerList[11]))
+
+        function mysort(a, b) {
+            return a[0] - b[0]
+        }
+
+        CareerArray = CareerArray.sort(mysort)
+
+        var careeropt = {
+            animationEnabled: true,
+            title: {
+                text: "職業",
+                fontColor: "black",
+                fontFamily: "Microsoft JhengHei",
+                fontWeight: "bold",
+                fontSize: 28
+            },
+            axisY: {
+                tickThickness: 0,
+                lineThickness: 0,
+                valueFormatString: " ",
+                gridThickness: 0
+            },
+            axisX: {
+                tickThickness: 10,
+                lineThickness: 5,
+                labelFontSize: 18,
+                valueFormatString: " ",
+                labelFontColor: "brown",
+                labelFontFamily: "Microsoft JhengHei",
+                interval: 1,
+            },
+            data: [{
+                indexLabelFontSize: 22,
+                toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                indexLabelPlacement: "inside",
+                indexLabelFontColor: "white",
+                indexLabelFontWeight: 400,
+                indexLabelFontFamily: "Microsoft JhengHei ",
+                color: "#014D65",
+                type: "bar",
+                dataPoints: [
+                    { y: CareerArray[0][0], indexLabel: CareerArray[0][2] + "%", label: CareerArray[0][1] },
+                    { y: CareerArray[1][0], indexLabel: CareerArray[1][2] + "%", label: CareerArray[1][1] },
+                    { y: CareerArray[2][0], indexLabel: CareerArray[2][2] + "%", label: CareerArray[2][1] },
+                    { y: CareerArray[3][0], indexLabel: CareerArray[3][2] + "%", label: CareerArray[3][1] },
+                    { y: CareerArray[4][0], indexLabel: CareerArray[4][2] + "%", label: CareerArray[4][1] },
+                    { y: CareerArray[5][0], indexLabel: CareerArray[5][2] + "%", label: CareerArray[5][1] },
+                    { y: CareerArray[6][0], indexLabel: CareerArray[6][2] + "%", label: CareerArray[6][1] },
+                    { y: CareerArray[7][0], indexLabel: CareerArray[7][2] + "%", label: CareerArray[7][1] },
+                    { y: CareerArray[8][0], indexLabel: CareerArray[8][2] + "%", label: CareerArray[8][1] },
+                    { y: CareerArray[9][0], indexLabel: CareerArray[9][2] + "%", label: CareerArray[9][1] },
+                    { y: CareerArray[10][0], indexLabel: CareerArray[10][2] + "%", label: CareerArray[10][1] },
+                    { y: CareerArray[11][0], indexLabel: CareerArray[11][2] + "%", label: CareerArray[11][1] }
+                ]
+            }]
+        };
+        $("#Careerchart").CanvasJSChart(careeropt);
+
+
+        numResidentList = new Array();
+        percentageResidentList = new Array();
+        ResidentArray = new Array();
+        for (i = 0; i < 22; i++) {
+            numResident = parseInt(document.getElementById("numR" + i).textContent)
+            numResidentList.push(numResident)
+        }
+
+        for (i = 0; i < 22; i++) {
+            percentageResident = parseInt(document.getElementById("perR" + i).textContent)
+            percentageResidentList.push(percentageResident)
+        }
+
+
+        ResidentArray.push(new Array(numResidentList[0], "台北市", percentageResidentList[0]))
+        ResidentArray.push(new Array(numResidentList[1], "新北市", percentageResidentList[1]))
+        ResidentArray.push(new Array(numResidentList[2], "基隆市", percentageResidentList[2]))
+        ResidentArray.push(new Array(numResidentList[3], "宜蘭縣", percentageResidentList[3]))
+        ResidentArray.push(new Array(numResidentList[4], "桃園市", percentageResidentList[4]))
+        ResidentArray.push(new Array(numResidentList[5], "新竹縣", percentageResidentList[5]))
+        ResidentArray.push(new Array(numResidentList[6], "新竹市", percentageResidentList[6]))
+        ResidentArray.push(new Array(numResidentList[7], "苗栗縣", percentageResidentList[7]))
+        ResidentArray.push(new Array(numResidentList[8], "台中市", percentageResidentList[8]))
+        ResidentArray.push(new Array(numResidentList[9], "彰化縣", percentageResidentList[9]))
+        ResidentArray.push(new Array(numResidentList[10], "南投縣", percentageResidentList[10]))
+        ResidentArray.push(new Array(numResidentList[11], "雲林縣", percentageResidentList[11]))
+        ResidentArray.push(new Array(numResidentList[12], "嘉義縣", percentageResidentList[12]))
+        ResidentArray.push(new Array(numResidentList[13], "嘉義市", percentageResidentList[13]))
+        ResidentArray.push(new Array(numResidentList[14], "台南市", percentageResidentList[14]))
+        ResidentArray.push(new Array(numResidentList[15], "高雄市", percentageResidentList[15]))
+        ResidentArray.push(new Array(numResidentList[16], "屏東縣", percentageResidentList[16]))
+        ResidentArray.push(new Array(numResidentList[17], "花蓮縣", percentageResidentList[17]))
+        ResidentArray.push(new Array(numResidentList[18], "台東縣", percentageResidentList[18]))
+        ResidentArray.push(new Array(numResidentList[19], "澎湖縣", percentageResidentList[19]))
+        ResidentArray.push(new Array(numResidentList[20], "金門縣", percentageResidentList[20]))
+        ResidentArray.push(new Array(numResidentList[21], "連江縣", percentageResidentList[21]))
+
+        function mysort(a, b) {
+            return a[0] - b[0]
+        }
+
+        ResidentArray = ResidentArray.sort(mysort)
+
+        var Residentopt = {
+            animationEnabled: true,
+            title: {
+                text: "居住地",
+                fontColor: "black",
+                fontFamily: "Microsoft JhengHei",
+                fontWeight: "bold",
+                fontSize: 28
+            },
+            axisY: {
+                tickThickness: 0,
+                lineThickness: 0,
+                valueFormatString: " ",
+                gridThickness: 0
+            },
+            axisX: {
+                tickThickness: 10,
+                lineThickness: 5,
+                labelFontSize: 18,
+                valueFormatString: " ",
+                labelFontColor: "brown",
+                labelFontFamily: "Microsoft JhengHei",
+                interval: 1,
+            },
+            data: [{
+                indexLabelFontSize: 22,
+                toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                indexLabelPlacement: "inside",
+                indexLabelFontColor: "white",
+                indexLabelFontWeight: 400,
+                indexLabelFontFamily: "Microsoft JhengHei ",
+                color: "#014D65",
+                type: "bar",
+                dataPoints: [
+                    { y: ResidentArray[0][0], indexLabel: ResidentArray[0][2] + "%", label: ResidentArray[0][1] },
+                    { y: ResidentArray[1][0], indexLabel: ResidentArray[1][2] + "%", label: ResidentArray[1][1] },
+                    { y: ResidentArray[2][0], indexLabel: ResidentArray[2][2] + "%", label: ResidentArray[2][1] },
+                    { y: ResidentArray[3][0], indexLabel: ResidentArray[3][2] + "%", label: ResidentArray[3][1] },
+                    { y: ResidentArray[4][0], indexLabel: ResidentArray[4][2] + "%", label: ResidentArray[4][1] },
+                    { y: ResidentArray[5][0], indexLabel: ResidentArray[5][2] + "%", label: ResidentArray[5][1] },
+                    { y: ResidentArray[6][0], indexLabel: ResidentArray[6][2] + "%", label: ResidentArray[6][1] },
+                    { y: ResidentArray[7][0], indexLabel: ResidentArray[7][2] + "%", label: ResidentArray[7][1] },
+                    { y: ResidentArray[8][0], indexLabel: ResidentArray[8][2] + "%", label: ResidentArray[8][1] },
+                    { y: ResidentArray[9][0], indexLabel: ResidentArray[9][2] + "%", label: ResidentArray[9][1] },
+                    { y: ResidentArray[10][0], indexLabel: ResidentArray[10][2] + "%", label: ResidentArray[10][1] },
+                    { y: ResidentArray[11][0], indexLabel: ResidentArray[11][2] + "%", label: ResidentArray[11][1] },
+                    { y: ResidentArray[12][0], indexLabel: ResidentArray[12][2] + "%", label: ResidentArray[12][1] },
+                    { y: ResidentArray[13][0], indexLabel: ResidentArray[13][2] + "%", label: ResidentArray[13][1] },
+                    { y: ResidentArray[14][0], indexLabel: ResidentArray[14][2] + "%", label: ResidentArray[14][1] },
+                    { y: ResidentArray[15][0], indexLabel: ResidentArray[15][2] + "%", label: ResidentArray[15][1] },
+                    { y: ResidentArray[16][0], indexLabel: ResidentArray[16][2] + "%", label: ResidentArray[16][1] },
+                    { y: ResidentArray[17][0], indexLabel: ResidentArray[17][2] + "%", label: ResidentArray[17][1] },
+                    { y: ResidentArray[18][0], indexLabel: ResidentArray[18][2] + "%", label: ResidentArray[18][1] },
+                    { y: ResidentArray[19][0], indexLabel: ResidentArray[19][2] + "%", label: ResidentArray[19][1] },
+                    { y: ResidentArray[20][0], indexLabel: ResidentArray[20][2] + "%", label: ResidentArray[20][1] },
+                    { y: ResidentArray[21][0], indexLabel: ResidentArray[21][2] + "%", label: ResidentArray[21][1] }
+
+                ]
+            }]
+        };
+        $("#Residentchart").CanvasJSChart(Residentopt);
+
+    } 
+</script> {% endblock %} {% block style %}{% load static %}
+<link href="{% static 'styles/userpattern.css' %}" rel="stylesheet"> {% endblock %} {% block content %} {% if request.COOKIES.id %}
+<div style="text-align:center;">
+    <img style="width:920px;height:270.60px;border-radius:20px;" src="{% static 'images/walk.jpeg' %}" alt="photo">
+</div>
+<p style="font-family:Microsoft JhengHei;font-size:32px;font-weight:bold;text-align:center;margin-top:2em">★ 本站使用者基本資料 ★</p>
+<div class="chartbox">
+    <div id="Genderchart" class="chartshow" style="float: left;"></div>
+    <div id="Careerchart" class="chartshow" style="float: right;"></div>
+    <!-- <div id="Residentchart" class="chartshow"style="margin-right: 5%"></div> -->
+</div>
+<div id="numMale" style="visibility:hidden;float:left">{{numMale}}</div>
+<div id="numFemale" style="visibility:hidden;float:left">{{numFemale}}</div>
+<div id="numC0" style="visibility:hidden;float:left">{{numC0}}</div>
+<div id="numC1" style="visibility:hidden;float:left">{{numC1}}</div>
+<div id="numC2" style="visibility:hidden;float:left">{{numC2}}</div>
+<div id="numC3" style="visibility:hidden;float:left">{{numC3}}</div>
+<div id="numC4" style="visibility:hidden;float:left">{{numC4}}</div>
+<div id="numC5" style="visibility:hidden;float:left">{{numC5}}</div>
+<div id="numC6" style="visibility:hidden;float:left">{{numC6}}</div>
+<div id="numC7" style="visibility:hidden;float:left">{{numC7}}</div>
+<div id="numC8" style="visibility:hidden;float:left">{{numC8}}</div>
+<div id="numC9" style="visibility:hidden;float:left">{{numC9}}</div>
+<div id="numC10" style="visibility:hidden;float:left">{{numC10}}</div>
+<div id="numC11" style="visibility:hidden;float:left">{{numC11}}</div>
+<div id="perC0" style="visibility:hidden;float:left">{{perC0}}</div>
+<div id="perC1" style="visibility:hidden;float:left">{{perC1}}</div>
+<div id="perC2" style="visibility:hidden;float:left">{{perC2}}</div>
+<div id="perC3" style="visibility:hidden;float:left">{{perC3}}</div>
+<div id="perC4" style="visibility:hidden;float:left">{{perC4}}</div>
+<div id="perC5" style="visibility:hidden;float:left">{{perC5}}</div>
+<div id="perC6" style="visibility:hidden;float:left">{{perC6}}</div>
+<div id="perC7" style="visibility:hidden;float:left">{{perC7}}</div>
+<div id="perC8" style="visibility:hidden;float:left">{{perC8}}</div>
+<div id="perC9" style="visibility:hidden;float:left">{{perC9}}</div>
+<div id="perC10" style="visibility:hidden;float:left">{{perC10}}</div>
+<div id="perC11" style="visibility:hidden;float:left">{{perC11}}</div>
+<div id="numR0" style="visibility:hidden;float:left">{{numR0}}</div>
+<div id="numR1" style="visibility:hidden;float:left">{{numR1}}</div>
+<div id="numR2" style="visibility:hidden;float:left">{{numR2}}</div>
+<div id="numR3" style="visibility:hidden;float:left">{{numR3}}</div>
+<div id="numR4" style="visibility:hidden;float:left">{{numR4}}</div>
+<div id="numR5" style="visibility:hidden;float:left">{{numR5}}</div>
+<div id="numR6" style="visibility:hidden;float:left">{{numR6}}</div>
+<div id="numR7" style="visibility:hidden;float:left">{{numR7}}</div>
+<div id="numR8" style="visibility:hidden;float:left">{{numR8}}</div>
+<div id="numR9" style="visibility:hidden;float:left">{{numR9}}</div>
+<div id="numR10" style="visibility:hidden;float:left">{{numR10}}</div>
+<div id="numR11" style="visibility:hidden;float:left">{{numR11}}</div>
+<div id="numR12" style="visibility:hidden;float:left">{{numR12}}</div>
+<div id="numR13" style="visibility:hidden;float:left">{{numR13}}</div>
+<div id="numR14" style="visibility:hidden;float:left">{{numR14}}</div>
+<div id="numR15" style="visibility:hidden;float:left">{{numR15}}</div>
+<div id="numR16" style="visibility:hidden;float:left">{{numR16}}</div>
+<div id="numR17" style="visibility:hidden;float:left">{{numR17}}</div>
+<div id="numR18" style="visibility:hidden;float:left">{{numR18}}</div>
+<div id="numR19" style="visibility:hidden;float:left">{{numR19}}</div>
+<div id="numR20" style="visibility:hidden;float:left">{{numR20}}</div>
+<div id="numR21" style="visibility:hidden;float:left">{{numR21}}</div>
+<div id="perR0" style="visibility:hidden;float:left">{{perR0}}</div>
+<div id="perR1" style="visibility:hidden;float:left">{{perR1}}</div>
+<div id="perR2" style="visibility:hidden;float:left">{{perR2}}</div>
+<div id="perR3" style="visibility:hidden;float:left">{{perR3}}</div>
+<div id="perR4" style="visibility:hidden;float:left">{{perR4}}</div>
+<div id="perR5" style="visibility:hidden;float:left">{{perR5}}</div>
+<div id="perR6" style="visibility:hidden;float:left">{{perR6}}</div>
+<div id="perR7" style="visibility:hidden;float:left">{{perR7}}</div>
+<div id="perR8" style="visibility:hidden;float:left">{{perR8}}</div>
+<div id="perR9" style="visibility:hidden;float:left">{{perR9}}</div>
+<div id="perR10" style="visibility:hidden;float:left">{{perR10}}</div>
+<div id="perR11" style="visibility:hidden;float:left">{{perR11}}</div>
+<div id="perR12" style="visibility:hidden;float:left">{{perR12}}</div>
+<div id="perR13" style="visibility:hidden;float:left">{{perR13}}</div>
+<div id="perR14" style="visibility:hidden;float:left">{{perR14}}</div>
+<div id="perR15" style="visibility:hidden;float:left">{{perR15}}</div>
+<div id="perR16" style="visibility:hidden;float:left">{{perR16}}</div>
+<div id="perR17" style="visibility:hidden;float:left">{{perR17}}</div>
+<div id="perR18" style="visibility:hidden;float:left">{{perR18}}</div>
+<div id="perR19" style="visibility:hidden;float:left">{{perR19}}</div>
+<div id="perR20" style="visibility:hidden;float:left">{{perR20}}</div>
+<div id="perR21" style="visibility:hidden;float:left">{{perR21}}</div>
+
+
+
+
+{% endif %} {% endblock %}

@@ -1,0 +1,14 @@
+.chartbox{
+    /* margin-top:10px; */
+    width:920px;
+    margin: 0 auto;
+
+}
+
+
+.chartshow{
+    height: 760px; 
+    width:48%;
+    /* float:left; */
+    /* margin-left:3%; */
+}
